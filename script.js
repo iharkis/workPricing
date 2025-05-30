@@ -5,11 +5,34 @@ let sections = [];
 let roleTemplates = [];
 
 // Initialize on page load
-window.addEventListener('load', function() {
+window.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing Work Schedule Tool...');
     loadRoleTemplates();
     updateRoleTemplatesList();
     updateRoleTemplateDropdown();
 });
+
+// Make all functions available globally
+window.showTab = showTab;
+window.addRoleTemplate = addRoleTemplate;
+window.removeRoleTemplate = removeRoleTemplate;
+window.editRoleTemplate = editRoleTemplate;
+window.bulkUpdateRates = bulkUpdateRates;
+window.fillFromTemplate = fillFromTemplate;
+window.addPerson = addPerson;
+window.removePerson = removePerson;
+window.previewImport = previewImport;
+window.importStructure = importStructure;
+window.clearImport = clearImport;
+window.createSection = createSection;
+window.removeSection = removeSection;
+window.addNewWorkItem = addNewWorkItem;
+window.addPersonToWorkItem = addPersonToWorkItem;
+window.editWorkItem = editWorkItem;
+window.saveWorkItemEdit = saveWorkItemEdit;
+window.cancelWorkItemEdit = cancelWorkItemEdit;
+window.removeWorkItem = removeWorkItem;
+window.exportToCSV = exportToCSV;
 
 // Tab functionality
 function showTab(tabName) {
@@ -24,22 +47,40 @@ function showTab(tabName) {
 
 // Role Templates Management
 function saveRoleTemplates() {
-    localStorage.setItem('workScheduleRoleTemplates', JSON.stringify(roleTemplates));
+    try {
+        localStorage.setItem('workScheduleRoleTemplates', JSON.stringify(roleTemplates));
+        console.log('Role templates saved:', roleTemplates);
+    } catch (e) {
+        console.error('Failed to save role templates:', e);
+    }
 }
 
 function loadRoleTemplates() {
-    const saved = localStorage.getItem('workScheduleRoleTemplates');
-    if (saved) {
-        roleTemplates = JSON.parse(saved);
-    } else {
-        // Default templates if none exist
+    try {
+        const saved = localStorage.getItem('workScheduleRoleTemplates');
+        if (saved) {
+            roleTemplates = JSON.parse(saved);
+            console.log('Loaded role templates from storage:', roleTemplates);
+        } else {
+            // Default templates if none exist
+            roleTemplates = [
+                { id: Date.now(), name: 'Senior Consultant', rate: 650 },
+                { id: Date.now() + 1, name: 'Junior Consultant', rate: 450 },
+                { id: Date.now() + 2, name: 'Project Manager', rate: 550 },
+                { id: Date.now() + 3, name: 'Business Analyst', rate: 500 }
+            ];
+            console.log('Created default role templates:', roleTemplates);
+            saveRoleTemplates();
+        }
+    } catch (e) {
+        console.error('Failed to load role templates:', e);
+        // Fallback to defaults if localStorage fails
         roleTemplates = [
             { id: Date.now(), name: 'Senior Consultant', rate: 650 },
             { id: Date.now() + 1, name: 'Junior Consultant', rate: 450 },
             { id: Date.now() + 2, name: 'Project Manager', rate: 550 },
             { id: Date.now() + 3, name: 'Business Analyst', rate: 500 }
         ];
-        saveRoleTemplates();
     }
 }
 
